@@ -1,0 +1,9 @@
+CREATE TABLE public.member_committees (
+  id SERIAL PRIMARY KEY,
+  member_id INT REFERENCES public.members(member_id) ON DELETE CASCADE,
+  committee_id INT REFERENCES public.committees(committee_id) ON DELETE CASCADE
+);
+
+
+
+
