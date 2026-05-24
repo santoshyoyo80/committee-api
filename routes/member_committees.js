@@ -8,7 +8,7 @@ const Committee = require('../models/committee');
 const MemberCommittee = require('../models/MemberCommittee'); // join table
 
 // POST: assign committees to a member
-router.post('/member_committees', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { member_id, committee_ids } = req.body;
 
