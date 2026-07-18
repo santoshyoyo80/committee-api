@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 // Import models
-const Member = require('../models/Member');
+const Member = require('../models/member');
 const Committee = require('../models/committee');
-const MemberCommittee = require('../models/MemberCommittee'); // join table
+const committee_member = require('../models/committee_member');
 
 // POST: assign committees to a member
 router.post('/', async (req, res) => {

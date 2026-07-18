@@ -1,29 +1,68 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
-const Committee = require('./committee');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../db");
 
-const Member = sequelize.define('Member', {
-  member_id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  member_name: { type: DataTypes.STRING, allowNull: false },
-  mobile: { type: DataTypes.STRING },
-  aadhaar: { type: DataTypes.STRING, unique: true },
-  pan: { type: DataTypes.STRING, unique: true },
-  email: { type: DataTypes.STRING },
-  relative_name: { type: DataTypes.STRING },
-  address: { type: DataTypes.TEXT },
-  opening_date: { type: DataTypes.DATE },
-  opening_charge: { type: DataTypes.INTEGER },
-  total_installments: { type: DataTypes.INTEGER },
-  due_date: { type: DataTypes.DATE },
-  maturity_date: { type: DataTypes.DATE },
-  mediator_name: { type: DataTypes.STRING },
-  created_by: { type: DataTypes.STRING, allowNull: false },
-  created_date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-  modified_date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-}, {
-  tableName: 'members',
-  schema: 'public',
-  timestamps: false,
-});
+const Member = sequelize.define(
+  "Member",
+  {
+    member_id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    mobile: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    relative_name: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    created_date: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    modified_date: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    aadhaar: {
+      type: DataTypes.STRING(12),
+      allowNull: true,
+      unique: true,
+      validate: {
+        is: /^[0-9]{12}$/, // optional: enforce 12 digits
+      },
+    },
+    pan: {
+      type: DataTypes.STRING(12),
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "members",
+    schema: "public",
+    timestamps: false,
+    hooks: {
+      beforeUpdate: (member) => {
+        member.modified_date = new Date();
+      },
+    },
+  },
+);
 
 module.exports = Member;

@@ -8,29 +8,45 @@ const Committee = sequelize.define('Committee', {
     primaryKey: true,
   },
   committee_name: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(100),
     allowNull: false,
-    unique: true,// enforce uniqueness at ORM level
+    unique: true, // enforce uniqueness at ORM level
+    validate: {
+      len: [3, 100] // optional: enforce length
+    }
   },
-  commit_tenure: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  cycle_frequency: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    validate: {
+      isIn: [['monthly', 'quarterly', 'yearly']] // optional: restrict values
+    }
   },
-  created_by: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  contribution_amount: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: true,
+    validate: {
+      min: 0
+    }
   },
-  created_date: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  start_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
   },
-  modified_date: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
+  end_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    validate: {
+      isAfterStart(value) {
+        if (value && this.start_date && new Date(value) <= new Date(this.start_date)) {
+          throw new Error('End date must be after start date');
+        }
+      }
+    }
+  }
 }, {
   tableName: 'committees',
-  timestamps: false, // we’re handling created_date/modified_date manually
+  timestamps: false // we’re not using Sequelize’s auto timestamps
 });
 
 module.exports = Committee;
