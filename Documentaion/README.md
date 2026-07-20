@@ -11,8 +11,8 @@ node --inspect server.js
 - Run `npm install`
 - Configure `.env` with DB credentials
 
-## Endpoints
-- POST http://localhost:3000/api/committees → Create a committee
+## Endpoint to Create a Committee
+- POST http://localhost:3000/api/committees
   Payload:
   ```json
   {
@@ -23,3 +23,38 @@ node --inspect server.js
     "end_date": "2027-07-20",
     "created_by": "Santosh"
   }
+
+## Endpoint to Create Members for a Committee
+- POST http://localhost:3000/api/committee-members/bulk-create
+  Payload:
+  ```json
+  {
+    "committee_name": "Housing Fund July 2026",
+    "joined_by": 42,
+    "members": [
+      {
+        "aadhaar": "123456789012",
+        "name": "Santosh Kumar",
+        "mobile": "9876543210",
+        "email": "santosh@example.com",
+        "password": "SecurePass@123",
+        "relative_name": "Rajesh Kumar",
+        "address": "Flat 101, Green Residency, Hyderabad",
+        "pan": "ABCDE1234F"
+      },
+      {
+        "aadhaar": "987654321098",
+        "name": "Ravi Sharma",
+        "mobile": "9123456780",
+        "email": "ravi@example.com",
+        "password": "AnotherPass@456",
+        "relative_name": "Sunita Sharma",
+        "address": "Plot 22, Jubilee Hills, Hyderabad",
+        "pan": "PQRSX5678Z"
+      }
+    ]
+  }
+
+
+
+  

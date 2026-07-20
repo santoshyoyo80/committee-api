@@ -1,18 +1,12 @@
 const express = require('express');
 const sequelize = require('./db');
 
-// Import routes
-const committeeRoutes = require('./routes/committee');
-const memberRoutes = require('./routes/member');
-const memberCommitteesRoutes = require('./routes/member_committees');
-
 const app = express();
 app.use(express.json());
 
-// Register routes
-app.use('/api/committees', committeeRoutes);
-app.use('/api/members', memberRoutes);
-app.use('/api/member_committees', memberCommitteesRoutes);
+// mounts all routes in this file 
+app.use('/api/committees', require('./routes/committee'));
+app.use('/api/committee-members', require('./routes/committeeMember'));
 
 // Sync DB and start server
 sequelize.authenticate()

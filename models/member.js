@@ -20,9 +20,7 @@ const Member = sequelize.define(
     email: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      validate: {
-        isEmail: true,
-      },
+      validate: { isEmail: true },
     },
     relative_name: {
       type: DataTypes.STRING(255),
@@ -44,13 +42,15 @@ const Member = sequelize.define(
       type: DataTypes.STRING(12),
       allowNull: true,
       unique: true,
-      validate: {
-        is: /^[0-9]{12}$/, // optional: enforce 12 digits
-      },
+      validate: { is: /^[0-9]{12}$/ },
     },
     pan: {
       type: DataTypes.STRING(12),
       allowNull: true,
+    },
+    is_manager: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
@@ -62,7 +62,7 @@ const Member = sequelize.define(
         member.modified_date = new Date();
       },
     },
-  },
+  }
 );
 
 module.exports = Member;
