@@ -19,10 +19,10 @@ const Committee = sequelize.define('Committee', {
     type: DataTypes.STRING(20),
     allowNull: true,
     validate: {
-      isIn: [['monthly', 'quarterly', 'yearly']] // optional: restrict values
+      isIn: [['monthly', 'weekly', 'quarterly', 'yearly']] // matches your DDL intent
     }
   },
-  contribution_amount: {
+  installment_amount: {
     type: DataTypes.DECIMAL(12, 2),
     allowNull: true,
     validate: {
@@ -43,6 +43,14 @@ const Committee = sequelize.define('Committee', {
         }
       }
     }
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  created_by: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
   }
 }, {
   tableName: 'committees',
