@@ -55,6 +55,23 @@ node --inspect server.js
     ]
   }
 
+## Generate installments for the given committee_id
+POST http://localhost:3000/api/installments/generate
+Content-Type: application/json
+
+Request body--
+
+{
+  "committee_id": 1
+}
+
+Response---
+{
+  "message": "Installments generated successfully"
+}
+
+
+
 
 
   

@@ -1,7 +1,6 @@
-const Member = require('../models/member');
-const Committee = require('../models/committee');
-const CommitteeMember = require('../models/committee_member'); // join table model
+const { Member, Committee, CommitteeMember } = require('../models'); // IMPORTANT: import from index.js
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Create multiple members for a committee
 exports.createMembersForCommittee = async (req, res) => {
@@ -9,8 +8,7 @@ exports.createMembersForCommittee = async (req, res) => {
     const { committee_name, members } = req.body;
     const errors = [];
 
-    // Find committee by name
-    const committee = await Committee.findOne({ where: { committee_name: committee_name } });
+    const committee = await Committee.findOne({ where: { committee_name } });
     if (!committee) {
       return res.status(400).json({ errors: [`Committee '${committee_name}' not found`] });
     }
@@ -20,23 +18,19 @@ exports.createMembersForCommittee = async (req, res) => {
     for (const m of members) {
       const { aadhaar, password } = m;
 
-      // Validate Aadhaar
       if (!aadhaar) {
         errors.push(`Aadhaar is required for member '${m.name}'`);
         continue;
       }
 
-      // Check uniqueness
       const existing = await Member.findOne({ where: { aadhaar } });
       if (existing) {
         errors.push(`Member with Aadhaar '${aadhaar}' already exists`);
         continue;
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create member
       const member = await Member.create({
         ...m,
         committee_id: committee.committee_id,
@@ -45,47 +39,76 @@ exports.createMembersForCommittee = async (req, res) => {
         modified_date: new Date(),
       });
 
-      // Ensure committee_members entry exists
-      const existingLink = await CommitteeMember.findOne({
-        where: {
-          member_id: member.member_id,
-          committee_id: committee.committee_id,
-        },
-      });
-
-      if (!existingLink) {
-        await CommitteeMember.create({
-          member_id: member.member_id,
-          committee_id: committee.committee_id,
+      await CommitteeMember.findOrCreate({
+        where: { member_id: member.member_id, committee_id: committee.committee_id },
+        defaults: {
           heads_count: 1,
           joining_date: new Date(),
           is_manager: false,
-          joined_by: null, // you can set to current user id if available
-        });
-      }
+          joined_by: null,
+        }
+      });
 
       createdMembers.push(member);
     }
 
     if (errors.length > 0) {
-      return res.status(207).json({
-        message: 'Some members could not be created',
-        errors,
-        createdMembers,
-      });
+      return res.status(207).json({ message: 'Some members could not be created', errors, createdMembers });
     }
 
-    res.status(201).json({
-      message: 'All members created successfully',
-      createdMembers,
-    });
+    res.status(201).json({ message: 'All members created successfully', createdMembers });
   } catch (err) {
     console.error('Error creating members:', err);
     res.status(500).json({ errors: [err.message] });
   }
 };
 
-// Login (unchanged)
+// Get all members of a committee
+exports.getMembersByCommittee = async (req, res) => {
+  try {
+    const { committee_id } = req.params;
+
+    const committee = await Committee.findByPk(committee_id, {
+      include: [{
+        model: Member,
+        attributes: ['member_id', 'name', 'email', 'phone'],
+        through: { attributes: ['heads_count', 'joining_date', 'is_manager'] }
+      }]
+    });
+
+    if (!committee) {
+      return res.status(404).json({ error: `Committee ${committee_id} not found` });
+    }
+
+    const members = committee.Members.map(m => ({
+      member_id: m.member_id,
+      name: m.name,
+      email: m.email,
+      phone: m.phone,
+      heads_count: m.CommitteeMember.heads_count,
+      joining_date: m.CommitteeMember.joining_date,
+      is_manager: m.CommitteeMember.is_manager
+    }));
+
+    res.json({
+      committee_id: committee.committee_id,
+      committee_name: committee.committee_name,
+      cycle_frequency: committee.cycle_frequency,
+      installment_amount: committee.installment_amount,
+      total_installments: committee.total_installments,
+      start_date: committee.start_date,
+      end_date: committee.end_date,
+      is_active: committee.is_active,
+      created_by: committee.created_by,
+      members
+    });
+  } catch (err) {
+    console.error('Error fetching committee members:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

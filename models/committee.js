@@ -29,6 +29,12 @@ const Committee = sequelize.define('Committee', {
       min: 0
     }
   },
+   total_installments: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 12,
+    validate: { min: 1 }
+  },
   start_date: {
     type: DataTypes.DATEONLY,
     allowNull: true,
