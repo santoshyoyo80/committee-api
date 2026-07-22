@@ -71,7 +71,7 @@ exports.getMembersByCommittee = async (req, res) => {
     const committee = await Committee.findByPk(committee_id, {
       include: [{
         model: Member,
-        attributes: ['member_id', 'name', 'email', 'phone'],
+        attributes: ['member_id', 'name', 'email'],
         through: { attributes: ['heads_count', 'joining_date', 'is_manager'] }
       }]
     });
@@ -84,7 +84,6 @@ exports.getMembersByCommittee = async (req, res) => {
       member_id: m.member_id,
       name: m.name,
       email: m.email,
-      phone: m.phone,
       heads_count: m.CommitteeMember.heads_count,
       joining_date: m.CommitteeMember.joining_date,
       is_manager: m.CommitteeMember.is_manager
