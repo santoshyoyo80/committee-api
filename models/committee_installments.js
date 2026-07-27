@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 
-const CommitteeInstallment = sequelize.define("CommitteeInstallment", {
+const CommitteeInstallments = sequelize.define("CommitteeInstallments", {
   installment_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -32,11 +32,6 @@ const CommitteeInstallment = sequelize.define("CommitteeInstallment", {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
-  penalty_amount: {
-    type: DataTypes.DECIMAL(12, 2),
-    defaultValue: 0,
-    validate: { min: 0 },
-  },
   status: {
     type: DataTypes.STRING(20),
     defaultValue: "pending",
@@ -54,4 +49,4 @@ const CommitteeInstallment = sequelize.define("CommitteeInstallment", {
   ]
 });
 
-module.exports = CommitteeInstallment;
+module.exports = CommitteeInstallments;
