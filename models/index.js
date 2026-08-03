@@ -26,7 +26,13 @@ Member.hasMany(CommitteeInstallments, { foreignKey: 'member_id' });
 CommitteeInstallments.belongsTo(Member, { foreignKey: 'member_id' });
 
 // CommitteeInstallments ↔ InstallmentBounces
-CommitteeInstallments.hasMany(InstallmentBounces, { foreignKey: 'installment_id' });
-InstallmentBounces.belongsTo(CommitteeInstallments, { foreignKey: 'installment_id' });
+CommitteeInstallments.hasMany(InstallmentBounces, { 
+  foreignKey: 'installment_id', 
+  as: 'bounces'   // alias for clarity
+});
+InstallmentBounces.belongsTo(CommitteeInstallments, { 
+  foreignKey: 'installment_id', 
+  as: 'installment' 
+});
 
 module.exports = { Member, Committee, CommitteeMember, CommitteeInstallments, InstallmentBounces };

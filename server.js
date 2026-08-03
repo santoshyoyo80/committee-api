@@ -8,6 +8,7 @@ app.use(express.json());
 app.use('/api/committees', require('./routes/committee'));
 app.use('/api/committee-members', require('./routes/committeeMember'));
 app.use('/api/committee-installments', require('./routes/committeeInstallment'));
+app.use('/api/member-search', require('./routes/memberSearch'));
 
 // Sync DB and start server
 sequelize.authenticate()
