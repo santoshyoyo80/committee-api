@@ -1,6 +1,6 @@
 const { Member, CommitteeMember, CommitteeInstallments, InstallmentBounces } = require('../models');
 
-async function searchMember(committee_id, member_id) {
+async function getMember(committee_id, member_id) {
   const member = await Member.findOne({
     where: { member_id },
     attributes: ['member_id', 'name', 'email', 'mobile', 'aadhaar', 'pan', 'address'],
@@ -48,12 +48,21 @@ async function searchMember(committee_id, member_id) {
     heads_count: member.CommitteeMembers[0].heads_count,
     joining_date: member.CommitteeMembers[0].joining_date,
     is_manager: member.CommitteeMembers[0].is_manager,
+    total_bounce_amount: member.CommitteeInstallments.reduce((total, installment) => {
+      return total + installment.bounces.reduce((bounceTotal, bounce) => {
+        if (bounce.is_paid === false && bounce.penalty_amount) {
+          return bounceTotal + parseFloat(bounce.penalty_amount);
+        }
+        return bounceTotal;
+      }, 0);
+    }, 0),
+
     installments: member.CommitteeInstallments.map(inst => ({
       installment_id: inst.installment_id,
       amount: inst.amount,
       due_date: inst.due_date,
       status: inst.status,
-      bounces: inst.bounces.map(b => ({   // ✅ use inst.bounces, not inst.InstallmentBounces
+      bounces: inst.bounces.map(b => ({
         bounce_id: b.bounce_id,
         penalty_amount: b.penalty_amount,
         note: b.note,
@@ -67,4 +76,4 @@ async function searchMember(committee_id, member_id) {
   };
 }
 
-module.exports = { searchMember };
+module.exports = { getMember };

@@ -5,6 +5,6 @@ const Member = require('../models/Member');
 const memberController = require('../controllers/memberController');
 
 // GET /api/committees/:committee_id/members/:member_id
-router.get('/:committee_id/members/:member_id', memberController.searchMember);
+router.get('/:committee_id/members/:member_id', memberController.getMember);
 
 module.exports = router;
