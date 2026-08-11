@@ -3,6 +3,7 @@ const Committee = require('./committee');
 const CommitteeMember = require('./committee_member');
 const CommitteeInstallments = require('./committee_installments');
 const InstallmentBounces = require('./installment_bounces');
+const MemberCommitteeAccess = require('./member_committee_access');
 
 // Committee ↔ Member
 Member.belongsToMany(Committee, { through: CommitteeMember, foreignKey: 'member_id', otherKey: 'committee_id' });
@@ -35,4 +36,11 @@ InstallmentBounces.belongsTo(CommitteeInstallments, {
   as: 'installment' 
 });
 
-module.exports = { Member, Committee, CommitteeMember, CommitteeInstallments, InstallmentBounces };
+// MemberCommitteeAccess ↔ Member & Committee
+Member.hasMany(MemberCommitteeAccess, { foreignKey: 'member_id' });
+MemberCommitteeAccess.belongsTo(Member, { foreignKey: 'member_id' });
+
+Committee.hasMany(MemberCommitteeAccess, { foreignKey: 'committee_id' });
+MemberCommitteeAccess.belongsTo(Committee, { foreignKey: 'committee_id' });
+
+module.exports = { Member, Committee, CommitteeMember, CommitteeInstallments, InstallmentBounces, MemberCommitteeAccess };

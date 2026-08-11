@@ -9,6 +9,7 @@ app.use('/api/committees', require('./routes/committee'));
 app.use('/api/committees', require('./routes/committeeMember'));
 app.use('/api/committee-installments', require('./routes/committeeInstallment'));
 app.use('/api/committees', require('./routes/memberSearch'));
+app.use('/api/admin', require('./routes/adminCommittee'));
 
 // Sync DB and start server
 sequelize.authenticate()
