@@ -6,7 +6,7 @@ app.use(express.json());
 
 // mounts all routes in this file 
 app.use('/api/committees', require('./routes/committee'));
-app.use('/api/committee-members', require('./routes/committeeMember'));
+app.use('/api/committees', require('./routes/committeeMember'));
 app.use('/api/committee-installments', require('./routes/committeeInstallment'));
 app.use('/api/member-search', require('./routes/memberSearch'));
 
